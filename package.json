@@ -1,0 +1,19 @@
+{
+  "name": "foody-microservices",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "gateway",
+    "services/*",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently -n gateway,user,order,delivery,client -c blue,green,yellow,red,magenta \"npm run dev -w gateway\" \"npm run dev -w user-service\" \"npm run dev -w order-service\" \"npm run dev -w delivery-service\" \"npm run dev -w client\"",
+    "dev:backend": "concurrently -n gateway,user,order,delivery -c blue,green,yellow,red \"npm run dev -w gateway\" \"npm run dev -w user-service\" \"npm run dev -w order-service\" \"npm run dev -w delivery-service\"",
+    "build": "npm run build -w gateway && npm run build -w user-service && npm run build -w order-service && npm run build -w delivery-service && npm run build -w client"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

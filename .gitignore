@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.next/
+.data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+.env
+*.log
+.DS_Store
+Thumbs.db
