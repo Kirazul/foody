@@ -1,0 +1,140 @@
+syntax = "proto3";
+
+package foody;
+
+// ============================================================
+// USER SERVICE - handles registration, login, profile
+// ============================================================
+service UserService {
+  rpc Register (RegisterRequest) returns (AuthResponse);
+  rpc Login (LoginRequest) returns (AuthResponse);
+  rpc GetProfile (TokenRequest) returns (UserProfile);
+}
+
+message RegisterRequest {
+  string name = 1;
+  string email = 2;
+  string password = 3;
+  string phone = 4;
+  string address = 5;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message TokenRequest {
+  string token = 1;
+}
+
+message AuthResponse {
+  string token = 1;
+  UserProfile user = 2;
+}
+
+message UserProfile {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  string phone = 4;
+  string address = 5;
+  string created_at = 6;
+}
+
+// ============================================================
+// ORDER SERVICE - handles food orders (CRUD)
+// ============================================================
+service OrderService {
+  rpc CreateOrder (CreateOrderRequest) returns (Order);
+  rpc GetOrder (OrderIdRequest) returns (Order);
+  rpc ListOrders (TokenRequest) returns (OrderList);
+  rpc UpdateOrderStatus (UpdateStatusRequest) returns (Order);
+  rpc CancelOrder (OrderIdRequest) returns (Order);
+}
+
+message OrderItem {
+  string name = 1;
+  int32 quantity = 2;
+  double price = 3;
+}
+
+message CreateOrderRequest {
+  string token = 1;
+  string restaurant = 2;
+  repeated OrderItem items = 3;
+  string delivery_address = 4;
+}
+
+message OrderIdRequest {
+  string token = 1;
+  string order_id = 2;
+}
+
+message UpdateStatusRequest {
+  string order_id = 1;
+  string status = 2;
+}
+
+message Order {
+  string id = 1;
+  string user_id = 2;
+  string restaurant = 3;
+  repeated OrderItem items = 4;
+  double total = 5;
+  string status = 6;
+  string delivery_address = 7;
+  string driver_id = 8;
+  string created_at = 9;
+  string updated_at = 10;
+}
+
+message OrderList {
+  repeated Order orders = 1;
+}
+
+// ============================================================
+// DELIVERY SERVICE - assigns drivers, tracks delivery
+// ============================================================
+service DeliveryService {
+  rpc AssignDriver (AssignDriverRequest) returns (Delivery);
+  rpc UpdateLocation (UpdateLocationRequest) returns (Delivery);
+  rpc GetDelivery (DeliveryIdRequest) returns (Delivery);
+  rpc ListActiveDeliveries (Empty) returns (DeliveryList);
+}
+
+message AssignDriverRequest {
+  string order_id = 1;
+  string pickup_address = 2;
+  string delivery_address = 3;
+}
+
+message UpdateLocationRequest {
+  string delivery_id = 1;
+  double latitude = 2;
+  double longitude = 3;
+  string status = 4;
+}
+
+message DeliveryIdRequest {
+  string delivery_id = 1;
+}
+
+message Delivery {
+  string id = 1;
+  string order_id = 2;
+  string driver_name = 3;
+  string status = 4;
+  double latitude = 5;
+  double longitude = 6;
+  string pickup_address = 7;
+  string delivery_address = 8;
+  string assigned_at = 9;
+  string updated_at = 10;
+}
+
+message DeliveryList {
+  repeated Delivery deliveries = 1;
+}
+
+message Empty {}
