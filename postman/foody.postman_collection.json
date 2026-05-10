@@ -1,0 +1,209 @@
+{
+  "info": {
+    "name": "Foody - Food Delivery API",
+    "description": "Complete test collection for the Foody microservices project. Run requests in order: Health → Auth → Orders → Deliveries → GraphQL.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:4000" },
+    { "key": "token", "value": "" },
+    { "key": "orderId", "value": "" },
+    { "key": "deliveryId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "01 - Health Check",
+      "item": [
+        {
+          "name": "Gateway Health",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/health" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["const res = pm.response.json();", "pm.collectionVariables.set('token', res.token);", "pm.test('Status 201', () => pm.response.to.have.status(201));", "pm.test('Has token', () => pm.expect(res.token).to.be.a('string'));"]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api/register" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@foody.com\",\n  \"password\": \"password123\",\n  \"phone\": \"+216 50 123 456\",\n  \"address\": \"123 Avenue Habib Bourguiba, Tunis\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["const res = pm.response.json();", "pm.collectionVariables.set('token', res.token);", "pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Has token', () => pm.expect(res.token).to.be.a('string'));"]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api/login" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@foody.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/profile" },
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Orders",
+      "item": [
+        {
+          "name": "Create Order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["const res = pm.response.json();", "pm.collectionVariables.set('orderId', res.id);", "pm.test('Status 201', () => pm.response.to.have.status(201));", "pm.test('Has order id', () => pm.expect(res.id).to.be.a('string'));", "pm.test('Status is pending', () => pm.expect(res.status).to.equal('pending'));"]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api/orders" },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"restaurant\": \"Pizza Palace\",\n  \"items\": [\n    { \"name\": \"Margherita\", \"quantity\": 2, \"price\": 12.0 },\n    { \"name\": \"Garlic Bread\", \"quantity\": 1, \"price\": 5.0 }\n  ],\n  \"delivery_address\": \"45 Rue de la Liberté, Tunis\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List My Orders",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/orders" },
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Get Order by ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}" },
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Cancel Order",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/cancel" },
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Deliveries",
+      "item": [
+        {
+          "name": "List Active Deliveries",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/deliveries/active" }
+          }
+        },
+        {
+          "name": "Update Driver Location",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/api/deliveries/{{deliveryId}}/location" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"latitude\": 36.8120,\n  \"longitude\": 10.1700,\n  \"status\": \"on-the-way\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 - GraphQL",
+      "item": [
+        {
+          "name": "GraphQL - Login",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/graphql" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation { login(email: \\\"test@foody.com\\\", password: \\\"password123\\\") { token user { id name email } } }\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GraphQL - My Orders",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/graphql" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query { orders(token: \\\"{{token}}\\\") { orders { id restaurant status total delivery_address created_at } } }\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GraphQL - Active Deliveries",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/graphql" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query { activeDeliveries { deliveries { id order_id driver_name status latitude longitude } } }\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GraphQL - Create Order",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/graphql" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation { createOrder(token: \\\"{{token}}\\\", restaurant: \\\"Sushi Express\\\", items: [{name: \\\"Salmon Roll\\\", quantity: 3, price: 15.0}], delivery_address: \\\"10 Rue de Carthage\\\") { id status total restaurant } }\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
