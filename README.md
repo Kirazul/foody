@@ -94,59 +94,27 @@ Foody uses **Retrieval-Augmented Generation** to ground LLM responses in real fo
 
 ## How It All Works - Training to Chat
 
-This UML-style flow is based on `notebooks/main/notebook7d111d6ae9.html`: it shows what was trained, which model won, how the model-to-RAG liaison was exported, and what happens after a user sends a message.
+Compact view of the full flow: train the Food-101 classifiers, select the champion, then use its `dish_name` output to ground chat with RAG.
 
 ```mermaid
 flowchart TD
-    subgraph Notebook["Kaggle Notebook Training Pipeline"]
-        Food101["Food-101 dataset\n101 food classes"] --> Split["Manifest split\n64,387 train\n11,363 validation\n25,250 test"]
-        Split --> Transforms["Image transforms\n224px for CNN and ResNets\n288px for EfficientNetB3\nImageNet normalization"]
-        Transforms --> Loaders["PyTorch Dataset and DataLoaders\nFood101FrameDataset"]
+    Food101["Food-101 dataset\n101 classes"] --> Prep["Prepare images\n64K train / 11K val / 25K test\n224px and 288px transforms"]
+    Prep --> Train["Train and compare 5 models\nCustomCNN 40.60% | CustomResNet10 56.70%\nResNet18 53.28% | ResNet50 66.26%\nEfficientNetB3 84.03%"]
+    Train --> Export["Champion: EfficientNetB3\nExport weights, class names, registry"]
 
-        Loaders --> CustomCNN["CustomCNN\nfrom scratch baseline\n40.60% accuracy\nmacro F1 0.392"]
-        Loaders --> CustomResNet10["CustomResNet10\nfrom scratch residual model\n56.70% accuracy\nmacro F1 0.562"]
-        Loaders --> ResNet18["ResNet18\nfrozen ImageNet backbone\n53.28% accuracy\nmacro F1 0.525"]
-        Loaders --> ResNet50["ResNet50\nfrozen ImageNet backbone\n66.26% accuracy\nmacro F1 0.659"]
-        Loaders --> EfficientNetB3["EfficientNetB3\nclassifier warmup then top 3 blocks fine-tuned\n84.03% accuracy\nmacro F1 0.839"]
-
-        CustomCNN --> Compare["Quantitative comparison\naccuracy, macro F1, parameters, training time"]
-        CustomResNet10 --> Compare
-        ResNet18 --> Compare
-        ResNet50 --> Compare
-        EfficientNetB3 --> Compare
-        Compare --> Champion["Champion selected\nEfficientNetB3"]
-        Champion --> Diagnostics["Diagnostics exported\nconfusion matrix\nclassification reports"]
-        Champion --> Contract["Model-to-RAG liaison contract\nmodel_registry.json\nclass_names.json\nclassifier output becomes dish_name"]
-        Contract --> Package["Artifacts packaged\nweights, metrics, registry, config"]
-    end
-
-    subgraph Runtime["After The User Sends A Message"]
-        UserInput["User message\noptional food image"] --> ChatRoute["FastAPI endpoint\nPOST /chat or /chat/stream"]
-        Package --> BackendLoad["Backend loads registry\nand EfficientNetB3 weights"]
-        BackendLoad --> VisionChoice{"Image attached\nand vision enabled?"}
-        ChatRoute --> VisionChoice
-
-        VisionChoice -- Yes --> Preprocess["Image preprocessing\nRGB conversion\nresize or crop\nImageNet normalize"]
-        Preprocess --> Inference["EfficientNetB3 inference\nsoftmax over 101 classes"]
-        Inference --> Prediction["Prediction payload\ndish name\nconfidence\ntop alternatives"]
-
-        VisionChoice -- No --> TextOnly["Text-only request\nno vision prediction"]
-        Prediction --> Query["Build retrieval query\nuser message + predicted dish"]
-        TextOnly --> Query
-
-        Query --> Retrieval["Local RAG retrieval\nTF-IDF ngrams\ncosine similarity\nlexical boosting"]
-        Retrieval --> Citations["Top 6 knowledge chunks\nrecipes, nutrition, food facts\nsource citations"]
-        Citations --> Prompt["Prompt assembly\nsystem rules\nuser request\nprediction context\nretrieved sources"]
-        Prompt --> LLM["OpenAI-compatible LLM\nnormal completion or SSE streaming"]
-        LLM --> Response["Final API response\nanswer\nprediction\ncitations\nstages and warnings"]
-    end
+    User["User message\noptional food image"] --> API["POST /chat or /chat/stream"]
+    Export --> Vision["Image recognition\nimage -> dish_name + confidence"]
+    API --> Vision
+    Vision --> RAG["RAG query\nuser message + predicted dish"]
+    RAG --> Sources["Top 6 recipe/nutrition chunks\nwith citations"]
+    Sources --> LLM["LLM prompt\nrules + prediction + sources"]
+    LLM --> Answer["Chat response\nanswer + prediction + citations"]
 ```
 
 **Reading the diagram:**
-- The notebook trained and compared all five models, not just the final app model.
-- EfficientNetB3 won the comparison and became the backend recognition model.
-- The liaison between vision and RAG is the exported contract: the classifier produces a `dish_name`, and that dish name is combined with the user message for retrieval.
-- After `/chat` or `/chat/stream`, the backend runs recognition when an image exists, retrieves the top knowledge chunks, builds the prompt, and returns the LLM answer with citations.
+- The notebook trains and compares all five Food-101 models.
+- EfficientNetB3 wins and becomes the backend image recognizer.
+- The vision-to-RAG liaison is `dish_name`: prediction plus user message drives retrieval before the LLM answers.
 
 ## How to Run
 
