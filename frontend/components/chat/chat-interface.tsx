@@ -485,7 +485,7 @@ export function ChatInterface() {
         </div>
       )}
 
-      <div suppressHydrationWarning className={cn("flex h-screen bg-background relative overflow-hidden transition-opacity duration-500 ease-out theme-grid-bg", isAppReady ? "opacity-100" : "opacity-0")}>
+      <div suppressHydrationWarning className={cn("flex h-screen bg-background relative overflow-hidden transition-opacity duration-500 ease-out", isAppReady ? "opacity-100" : "opacity-0")}>
         <div className="relative z-10 flex h-full w-full">
           <div className="flex flex-1 flex-col z-10 w-full min-w-0">
             <div className="flex flex-1 overflow-hidden">

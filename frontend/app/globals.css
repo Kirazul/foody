@@ -126,40 +126,6 @@
   display: none;
 }
 
-.theme-grid-bg {
-  position: relative;
-  background-color: hsl(var(--background));
-}
-
-.theme-grid-bg::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image: 
-    linear-gradient(to right, hsl(var(--primary) / 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, hsl(var(--primary) / 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 80%);
-  -webkit-mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 80%);
-  opacity: 0.85;
-}
-
-.theme-grid-bg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background: radial-gradient(
-    circle at 50% 0%, 
-    hsl(var(--primary) / var(--glow-opacity, 0.08)) 0%, 
-    transparent 65%
-  );
-  transition: background 0.6s ease;
-}
-
 .foody-chat-bg {
   background: radial-gradient(circle at top, #ffffff0f, transparent 60%), hsl(var(--background));
 }
@@ -267,4 +233,3 @@
 .dark .token.triple-quoted-string {
   color: hsl(142 60% 55%);
 }
-

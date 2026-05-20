@@ -92,45 +92,41 @@ Foody uses **Retrieval-Augmented Generation** to ground LLM responses in real fo
 
 ---
 
-## How It All Works — End to End
+## How It All Works - End to End
+
+This UML sequence follows the real user request path: upload a food photo, classify it, retrieve trusted context, then stream a cited answer back to the chat UI.
 
 ```mermaid
-flowchart TD
-    subgraph Training["🏋️ Model Training (Kaggle)"]
-        DS["📦 Food-101 Dataset\n101 categories · 101,000 images"]
-        SP["✂️ Split Data\n64K train · 11K val · 25K test"]
-        AUG["🔄 Data Augmentation\nResize · Flip · Normalize"]
-        ARCH["🧠 5 Model Architectures\nCustomCNN · CustomResNet10\nResNet18 · ResNet50 · EfficientNetB3"]
-        TRN["⚡ Train with Mixed Precision\nAdamW · Early Stopping · Checkpoints"]
-        EVAL["📊 Evaluate on Test Set\nAccuracy · F1 · Confusion Matrix"]
-        BEST["🏆 Best Model: EfficientNetB3\n84.03% accuracy"]
-    end
+sequenceDiagram
+    actor User
+    participant UI as Next.js Chat UI
+    participant API as FastAPI Backend
+    participant Vision as Vision Service
+    participant Model as EfficientNetB3 Model
+    participant RAG as RAG Retriever
+    participant KB as Knowledge Base
+    participant LLM as OpenAI-compatible LLM
 
-    subgraph Inference["🍽️ When a User Uploads a Photo"]
-        IMG["📸 User Food Photo"]
-        PRE["🔧 Preprocess Image\nResize to 288px · ImageNet normalize"]
-        FWD["🧠 EfficientNetB3 Forward Pass\nConv layers → Feature maps → Classifier"]
-        SOFT["📈 Softmax → Top Predictions\ne.g. 'Pizza' (92%), 'Flatbread' (4%)"]
-    end
-
-    subgraph RAG["📚 RAG Knowledge Retrieval"]
-        QRY["🔍 Build Query\nDish name + user question"]
-        TFIDF["📐 TF-IDF Vectorize\n12,000 features · (1,2)-grams"]
-        COS["📏 Cosine Similarity\nRank all knowledge chunks"]
-        TOP["📋 Top 6 Relevant Chunks\nRecipes · Nutrition · Ingredients"]
-    end
-
-    subgraph Response["💬 Generate Response"]
-        CTX["📝 Build Prompt\nPrediction + RAG chunks + user message"]
-        LLM["🤖 LLM Generates Answer\nGrounded in retrieved knowledge"]
-        ANS["✅ Final Response\nRecipe · Nutrition · Tips\nwith source citations"]
-    end
-
-    DS --> SP --> AUG --> ARCH --> TRN --> EVAL --> BEST
-    IMG --> PRE --> FWD --> SOFT
-    SOFT --> QRY --> TFIDF --> COS --> TOP
-    TOP --> CTX --> LLM --> ANS
+    User->>UI: Upload a food photo and ask a question
+    UI->>API: POST /chat or /chat/stream
+    API->>Vision: Classify the uploaded image
+    Vision->>Model: Resize, normalize, and run inference
+    Model-->>Vision: Top dish predictions with confidence
+    Vision-->>API: Best dish, confidence, and alternatives
+    API->>RAG: Search using the dish and user question
+    RAG->>KB: Rank recipe and nutrition chunks
+    KB-->>RAG: Most relevant source chunks
+    RAG-->>API: Grounding context and citations
+    API->>LLM: Build prompt with prediction, question, and sources
+    LLM-->>API: Stream grounded answer tokens
+    API-->>UI: Send response, prediction, and citations
+    UI-->>User: Show the answer with source references
 ```
+
+**Reading the diagram:**
+- The frontend only handles the user experience: uploads, chat state, streaming display, and citations.
+- The backend coordinates the request so the vision model, RAG retriever, and LLM stay behind one API.
+- The LLM answer is grounded by both the classifier result and the retrieved recipe/nutrition sources.
 
 ## How to Run
 
