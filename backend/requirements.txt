@@ -1,0 +1,10 @@
+pandas
+pillow
+scikit-learn
+torch
+torchvision
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+openai

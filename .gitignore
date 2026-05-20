@@ -1,11 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Node
 node_modules/
-dist/
 .next/
-.data/
-*.sqlite
-*.sqlite-wal
-*.sqlite-shm
+out/
+
+# Environment
 .env
-*.log
+.env*.local
+
+# Caches
+.torch_cache/
+
+# Model weights (too large for git)
+models/*.pth
+
+# OS
 .DS_Store
 Thumbs.db

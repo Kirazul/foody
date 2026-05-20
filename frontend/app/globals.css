@@ -1,0 +1,270 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+    --radius: 0.5rem;
+    --glow-opacity: 0.05;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+    --glow-opacity: 0.12;
+  }
+
+  .theme-matcha {
+    --background: 80 37% 95%;
+    --foreground: 142 30% 12%;
+    --card: 72 40% 98%;
+    --muted: 84 30% 88%;
+    --muted-foreground: 142 14% 38%;
+    --secondary: 84 30% 88%;
+    --primary: 136 42% 38%;
+    --border: 83 20% 78%;
+    --accent: 74 42% 86%;
+  }
+
+  .theme-blueberry {
+    --background: 226 54% 96%;
+    --foreground: 230 42% 12%;
+    --card: 0 0% 100%;
+    --muted: 227 45% 90%;
+    --muted-foreground: 232 18% 42%;
+    --secondary: 227 45% 90%;
+    --primary: 238 73% 62%;
+    --border: 228 30% 83%;
+    --accent: 246 52% 90%;
+  }
+
+  .theme-sunset {
+    --background: 25 88% 96%;
+    --foreground: 16 58% 12%;
+    --card: 34 100% 98%;
+    --muted: 28 75% 89%;
+    --muted-foreground: 17 32% 39%;
+    --secondary: 28 75% 89%;
+    --primary: 18 86% 55%;
+    --border: 23 56% 80%;
+    --accent: 36 92% 88%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+    background: #050607;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  body::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.modern-sidebar {
+  border-right: 1px solid hsl(var(--border) / 0.2);
+}
+
+.modern-chat-container {
+  background: transparent;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.theme-grid-bg {
+  position: relative;
+  background-color: hsl(var(--background));
+}
+
+.theme-grid-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    linear-gradient(to right, hsl(var(--primary) / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--primary) / 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 80%);
+  opacity: 0.85;
+}
+
+.theme-grid-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    circle at 50% 0%, 
+    hsl(var(--primary) / var(--glow-opacity, 0.08)) 0%, 
+    transparent 65%
+  );
+  transition: background 0.6s ease;
+}
+
+.foody-chat-bg {
+  background: radial-gradient(circle at top, #ffffff0f, transparent 60%), hsl(var(--background));
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Prism.js syntax highlighting (theme-aware) ── */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: hsl(var(--muted-foreground) / 0.55);
+  font-style: italic;
+}
+
+.token.punctuation {
+  color: hsl(var(--muted-foreground) / 0.7);
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol {
+  color: hsl(var(--primary));
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin {
+  color: hsl(142 71% 45%);
+}
+
+.dark .token.selector,
+.dark .token.attr-name,
+.dark .token.string,
+.dark .token.char,
+.dark .token.builtin {
+  color: hsl(142 60% 55%);
+}
+
+.token.operator,
+.token.entity,
+.token.url {
+  color: hsl(var(--muted-foreground));
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: hsl(280 68% 58%);
+}
+
+.dark .token.atrule,
+.dark .token.attr-value,
+.dark .token.keyword {
+  color: hsl(280 80% 72%);
+}
+
+.token.function,
+.token.class-name {
+  color: hsl(207 82% 50%);
+}
+
+.dark .token.function,
+.dark .token.class-name {
+  color: hsl(207 90% 68%);
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: hsl(28 80% 52%);
+}
+
+.dark .token.regex,
+.dark .token.important,
+.dark .token.variable {
+  color: hsl(28 90% 65%);
+}
+
+.token.decorator {
+  color: hsl(var(--primary) / 0.7);
+}
+
+.token.triple-quoted-string {
+  color: hsl(142 71% 45%);
+}
+
+.dark .token.triple-quoted-string {
+  color: hsl(142 60% 55%);
+}
+

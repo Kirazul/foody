@@ -1,0 +1,58 @@
+{
+  "task": "food101_classification",
+  "recipe_generation": "backend_rag_api",
+  "best_model": "EfficientNetB3",
+  "models": {
+    "EfficientNetB3": {
+      "architecture": "torchvision.models.efficientnet_b3",
+      "weights": "models/EfficientNetB3_best.pth",
+      "image_size": 300,
+      "normalization": {
+        "mean": [0.485, 0.456, 0.406],
+        "std": [0.229, 0.224, 0.225]
+      },
+      "training_strategy": "full fine-tuning with AdamW, StepLR, AMP, and EfficientNetB3 fast script"
+    },
+    "CustomCNN": {
+      "architecture": "FoodyCustomCNN",
+      "weights": "models/CustomCNN_best.pth",
+      "image_size": 224,
+      "normalization": {
+        "mean": [0.485, 0.456, 0.406],
+        "std": [0.229, 0.224, 0.225]
+      },
+      "training_strategy": "scratch baseline CNN"
+    },
+    "CustomResNet10": {
+      "architecture": "CustomResNet10",
+      "weights": "models/CustomResNet10_best.pth",
+      "image_size": 224,
+      "normalization": {
+        "mean": [0.485, 0.456, 0.406],
+        "std": [0.229, 0.224, 0.225]
+      },
+      "training_strategy": "scratch ResNet10 with residual connections"
+    },
+    "ResNet18": {
+      "architecture": "torchvision.models.resnet18",
+      "weights": "models/ResNet18_best.pth",
+      "image_size": 224,
+      "normalization": {
+        "mean": [0.485, 0.456, 0.406],
+        "std": [0.229, 0.224, 0.225]
+      },
+      "training_strategy": "frozen ImageNet ResNet18 backbone"
+    },
+    "ResNet50": {
+      "architecture": "torchvision.models.resnet50",
+      "weights": "models/ResNet50_best.pth",
+      "image_size": 224,
+      "normalization": {
+        "mean": [0.485, 0.456, 0.406],
+        "std": [0.229, 0.224, 0.225]
+      },
+      "training_strategy": "frozen ImageNet ResNet50 backbone"
+    }
+  },
+  "classes": "models/class_names.json"
+}

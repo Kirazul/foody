@@ -1,0 +1,22 @@
+{
+  "model": "EfficientNetB3",
+  "architecture": "torchvision.models.efficientnet_b3",
+  "dataset": "Food-101",
+  "train_split": "Food101 official train.txt",
+  "val_split": "Food101 official test.txt",
+  "epochs": 15,
+  "per_gpu_batch_size": 16,
+  "global_batch_size": 16,
+  "image_size": 300,
+  "resize_size": 320,
+  "optimizer": "AdamW",
+  "learning_rate": 0.0001,
+  "weight_decay": 0.0001,
+  "scheduler": "StepLR",
+  "scheduler_step_size": 5,
+  "scheduler_gamma": 0.1,
+  "criterion": "CrossEntropyLoss",
+  "amp": true,
+  "best_val_accuracy": 0.889663,
+  "recipe_generation": "Use the Foody frontend/backend RAG API."
+}

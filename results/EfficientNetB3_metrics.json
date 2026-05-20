@@ -1,0 +1,11 @@
+{
+  "model": "EfficientNetB3",
+  "best_val_accuracy": 0.889663,
+  "training_seconds": 13156.88,
+  "epochs": 15,
+  "per_gpu_batch_size": 16,
+  "global_batch_size": 16,
+  "image_size": 300,
+  "gpu_count": 1,
+  "data_parallel": false
+}
