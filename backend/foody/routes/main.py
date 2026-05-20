@@ -76,6 +76,10 @@ def metadata() -> dict[str, object]:
     return {
         "models": recognizer.available_models(),
         "vision_models": recognizer.model_options(),
+        "supported_foods": [
+            {"id": class_name, "name": class_name.replace("_", " ").title()}
+            for class_name in recognizer.class_names
+        ],
         "llm": {
             "base_url": settings.llm_base_url,
             "default_model": settings.llm_default_model,

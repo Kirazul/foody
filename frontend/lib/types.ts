@@ -71,6 +71,7 @@ export interface LlmProviderConfig {
 export interface FoodyMetadata {
   models: Record<string, boolean>
   vision_models: Array<{ id: string; name: string; description?: string }>
+  supported_foods?: Array<{ id: string; name: string }>
   llm: {
     base_url: string
     default_model: string

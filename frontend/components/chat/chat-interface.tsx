@@ -498,6 +498,7 @@ export function ChatInterface() {
                   visionModel={selectedVisionModel}
                   llmOptions={llmOptions}
                   visionOptions={visionOptions}
+                  supportedFoods={metadata?.supported_foods}
                   onLlmModelChange={handleLlmModelChange}
                   onVisionModelChange={setSelectedVisionModel}
                 />
