@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, useMemo } from "react"
-import { BookOpen, ChevronLeft, X, Copy, Check, Maximize2, Minimize2 } from "lucide-react"
+import { BookOpen, ChevronLeft, X, Copy, Check, Maximize2, Minimize2, ExternalLink, FileDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getApiUrl } from "@/lib/api"
 import { parseNotebook, extractStages, type ParsedNotebook, type NotebookCell, type CellOutput, type StageEntry } from "@/lib/notebook-parser"
@@ -284,7 +284,38 @@ export function NotebookViewer({ open, onOpenChange }: NotebookViewerProps) {
         )}>
 
           {/* Top-right controls */}
-          <div className="absolute right-4 top-4 z-50 flex items-center gap-1">
+          <div className="absolute right-4 top-4 z-50 flex items-center gap-1.5">
+            <button
+              className="inline-flex h-8 px-2.5 items-center justify-center gap-1.5 rounded-full text-xs font-semibold text-muted-foreground transition hover:bg-muted/50 hover:text-foreground focus-visible:outline-none"
+              aria-label="Open raw notebook"
+              title="Open raw JSON notebook in new tab"
+              onClick={() => window.open(`${getApiUrl()}/notebook`, "_blank")}
+            >
+              <ExternalLink className="h-4 w-4" />
+              <span className="hidden sm:inline">Open Raw</span>
+            </button>
+            <button
+              className="inline-flex h-8 px-2.5 items-center justify-center gap-1.5 rounded-full text-xs font-semibold text-muted-foreground transition hover:bg-muted/50 hover:text-foreground focus-visible:outline-none"
+              aria-label="Download notebook"
+              title="Download raw .ipynb notebook file"
+              onClick={() => {
+                fetch(`${getApiUrl()}/notebook`)
+                  .then((res) => res.blob())
+                  .then((blob) => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "notebook7d111d6ae9.ipynb";
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                  });
+              }}
+            >
+              <FileDown className="h-4 w-4" />
+              <span className="hidden sm:inline">Download</span>
+            </button>
             <button
               className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted/50 hover:text-foreground focus-visible:outline-none"
               aria-label={isMaximized ? "Exit full page" : "Full page"}
