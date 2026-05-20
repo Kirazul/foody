@@ -288,8 +288,8 @@ export function NotebookViewer({ open, onOpenChange }: NotebookViewerProps) {
             <button
               className="inline-flex h-8 px-2.5 items-center justify-center gap-1.5 rounded-full text-xs font-semibold text-muted-foreground transition hover:bg-muted/50 hover:text-foreground focus-visible:outline-none"
               aria-label="Open raw notebook"
-              title="Open raw JSON notebook in new tab"
-              onClick={() => window.open(`${getApiUrl()}/notebook`, "_blank")}
+              title="Open notebook raw in new tab (Kaggle/Jupyter style)"
+              onClick={() => window.open(`${getApiUrl()}/notebook/raw`, "_blank")}
             >
               <ExternalLink className="h-4 w-4" />
               <span className="hidden sm:inline">Open Raw</span>

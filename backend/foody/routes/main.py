@@ -5,7 +5,7 @@ from io import BytesIO
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import HTMLResponse, StreamingResponse
 from PIL import Image
 from pydantic import BaseModel
 
@@ -58,6 +58,15 @@ def notebook() -> dict[str, object]:
         raise HTTPException(status_code=404, detail="No training notebook found")
     content = json.loads(files[0].read_text(encoding="utf-8"))
     return content
+
+
+@app.get("/notebook/raw", response_class=HTMLResponse)
+def notebook_raw() -> HTMLResponse:
+    notebook_path = settings.notebook_dir
+    files = sorted(notebook_path.glob("*.html")) if notebook_path.exists() else []
+    if not files:
+        raise HTTPException(status_code=404, detail="No raw HTML notebook found")
+    return HTMLResponse(content=files[0].read_text(encoding="utf-8"))
 
 
 @app.get("/metadata")
